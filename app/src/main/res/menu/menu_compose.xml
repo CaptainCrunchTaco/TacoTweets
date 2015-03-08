@@ -2,6 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.codepath.apps.TacoTweets.activity.ComposeActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item
+        android:id="@+id/tvCharacterCount"
+        android:actionViewClass="android.widget.TextView"
+        app:showAsAction="ifRoom"
+        android:title="140"
+        />
 </menu>
