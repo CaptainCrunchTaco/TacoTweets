@@ -23,11 +23,11 @@ Notes:
 
 Did a silly thing and spent an hour looking for a bug. Turned out I forgot to initialize the client #yep  
 
-Icon deviates from Material Design. Ok with it for now since it seems to draw attention away from other apps. Color scheme how ever needs to be revisited.  
+Icon deviates from Material Design. Ok with it for now since it seems to draw attention away from other apps. Color scheme however needs to be revisited.  
 
 For future updates:  
-- Add logout feature  
-- Clean up UI  
+- Add "logout" feature  
+- Cleanup UI  
 - Add more features like reply, favorite, retweet  
 
 A video of the app via YouTube: https://www.youtube.com/watch?v=ImfO_Cn8azQ&feature=youtu.be
