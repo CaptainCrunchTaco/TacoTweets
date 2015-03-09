@@ -1,6 +1,9 @@
 package com.codepath.apps.TacoTweets.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -9,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.codepath.apps.TacoTweets.EndlessScrollListener;
 import com.codepath.apps.TacoTweets.R;
@@ -77,49 +81,58 @@ public class TimelineActivity extends ActionBarActivity {
     }
 
     public void fetchTimelineAsync() {
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-            public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-                // Remember to CLEAR OUT old items before appending in the new ones
-                aTweets.clear();
-                // ...the data has come back, add new items to your adapter...
-                aTweets.addAll(Tweet.fromJSONArray(json));
-                // Now we call setRefreshing(false) to signal refresh has finished
-                swipeContainer.setRefreshing(false);
-            }
+        if(isNetworkAvailable()) {
+            client.getHomeTimeline(new JsonHttpResponseHandler() {
+                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
+                    // Remember to CLEAR OUT old items before appending in the new ones
+                    aTweets.clear();
+                    // ...the data has come back, add new items to your adapter...
+                    aTweets.addAll(Tweet.fromJSONArray(json));
+                    // Now we call setRefreshing(false) to signal refresh has finished
+                    swipeContainer.setRefreshing(false);
+                }
 
-            public void onFailure(Throwable e) {
-                Log.d("DEBUG", "Fetch timeline error: " + e.toString());
-            }
-        });
+                public void onFailure(Throwable e) {
+                    Log.d("DEBUG", "Fetch timeline error: " + e.toString());
+                }
+            });
+        } else {
+            swipeContainer.setRefreshing(false);
+            Toast.makeText(this, "Can't refresh, no internet connection", Toast.LENGTH_LONG).show();
+        }
     }
 
 
     // Append more data into the adapter
     public void customLoadMoreDataFromApi(int offset) {
-        // This method probably sends out a network request and appends new data items to your adapter.
-        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
-        // Deserialize API response and then construct new objects to append to the adapter
-        client.getHomeTimeline(Tweet.getMaxId(), new JsonHttpResponseHandler() {
-            //SUCCESS
+        if(isNetworkAvailable()) {
+            // This method probably sends out a network request and appends new data items to your adapter.
+            // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
+            // Deserialize API response and then construct new objects to append to the adapter
+            client.getHomeTimeline(Tweet.getMaxId(), new JsonHttpResponseHandler() {
+                //SUCCESS
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-                Log.d("DEBUG", json.toString());
-                //DESERIALIZE JSON
-                //CREATE MODELS
-                //LOAD THE MODEL DATA INTO A LIST VIEW
-                aTweets.addAll(Tweet.fromJSONArray(json));
-                Log.d("DEBUG Custom", aTweets.toString());
-            }
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
+                    Log.d("DEBUG", json.toString());
+                    //DESERIALIZE JSON
+                    //CREATE MODELS
+                    //LOAD THE MODEL DATA INTO A LIST VIEW
+                    aTweets.addAll(Tweet.fromJSONArray(json));
+                    Log.d("DEBUG Custom", aTweets.toString());
+                }
 
 
-            //FAILURE
+                //FAILURE
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("DEBUG PopulateTimeline", errorResponse.toString());
-            }
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("DEBUG PopulateTimeline", errorResponse.toString());
+                }
+            });
+        } else {
+            Toast.makeText(this, "Can't load stories, no internet connection", Toast.LENGTH_LONG).show();
+        }
     }
 
 
@@ -127,27 +140,33 @@ public class TimelineActivity extends ActionBarActivity {
     //Send an API request to get the timeline JSON
     //Fill the listview by creating the tweet objects from the JSON
     private void populateTimeline() {
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-            //SUCCESS
+        if(isNetworkAvailable()) {
+            client.getHomeTimeline(new JsonHttpResponseHandler() {
+                //SUCCESS
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-                Log.d("DEBUG", json.toString());
-                //DESERIALIZE JSON
-                //CREATE MODELS
-                //LOAD THE MODEL DATA INTO A LIST VIEW
-                aTweets.addAll(Tweet.fromJSONArray(json));
-                Log.d("DEBUG", aTweets.toString());
-            }
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
+                    Log.d("DEBUG", json.toString());
+                    //DESERIALIZE JSON
+                    //CREATE MODELS
+                    //LOAD THE MODEL DATA INTO A LIST VIEW
+                    aTweets.addAll(Tweet.fromJSONArray(json));
+                    Log.d("DEBUG", aTweets.toString());
+                }
 
 
-            //FAILURE
+                //FAILURE
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("DEBUG PopulateTimeline", errorResponse.toString());
-            }
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("DEBUG PopulateTimeline", errorResponse.toString());
+                }
+            });
+        } else {
+            //Populate with SQLite database
+//            Toast.makeText(this, "Loading from SQLite database", Toast.LENGTH_LONG).show();
+            aTweets.addAll(Tweet.fromSQLite());
+        }
     }
 
 
@@ -173,5 +192,12 @@ public class TimelineActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 }

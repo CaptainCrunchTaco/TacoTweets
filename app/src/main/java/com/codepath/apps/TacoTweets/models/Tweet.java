@@ -47,20 +47,43 @@ package com.codepath.apps.TacoTweets.models;
 
 */
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 //Parse the JSON + store the data + encapsulate state logic and display logic
-public class Tweet {
+@Table(name = "Tweets")
+public class Tweet extends Model {
     //list out the attributes
+    @Column(name = "body")
     private String body;
+    @Column(name = "uid", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     private long uid; // unique id for the tweet
+    @Column(name = "user")
     private User user; // store embedded user object
+    @Column(name = "createdAt")
     private String createdAt;
     private static long maxId=-1;
+
+    public Tweet() {
+        super();
+    }
+    public Tweet(String body, long uid, User user, String createdAt){
+        super();
+        this.body = body;
+        this.uid = uid;
+        this.user = user;
+        this.createdAt = createdAt;
+    }
+
 
     public static long getMaxId() {
         return maxId;
@@ -99,6 +122,7 @@ public class Tweet {
                 }
                 if(tweet != null) {
                     tweets.add(tweet);
+                    tweet.save();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -108,6 +132,14 @@ public class Tweet {
         //Return the finish list
         return tweets;
     }
+
+    public static List<Tweet> fromSQLite() {
+        // This is how you execute a query
+        return new Select()
+                .from(Tweet.class).orderBy("uid DESC")
+                .execute();
+    }
+
 
     // Deserialize the JSON and build Tweet objects
     // Tweet.fromJSON{"{...}"} => <Tweet>

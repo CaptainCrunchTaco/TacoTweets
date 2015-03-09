@@ -1,5 +1,9 @@
 package com.codepath.apps.TacoTweets.models;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,12 +24,17 @@ import org.json.JSONObject;
     }
 
  */
-public class User {
+@Table(name = "Users")
+public class User extends Model{
 
     //list attributes
+    @Column(name = "Name")
     private String name;
+    @Column(name = "uid")
     private long uid;
+    @Column(name = "screenName")
     private String screenName;
+    @Column(name = "profileImageUrl")
     private String profileImageUrl;
 
 
@@ -54,6 +63,7 @@ public class User {
             u.uid = jsonObject.getLong("id");
             u.screenName = jsonObject.getString("screen_name");
             u.profileImageUrl = jsonObject.getString("profile_image_url");
+            u.save();
         } catch (JSONException e) {
             e.printStackTrace();
         }
