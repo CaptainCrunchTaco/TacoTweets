@@ -13,9 +13,21 @@ Completed user stories:
  * [x] Required: User can click a “Compose” icon in the Action Bar on the top right
  * [x] Required: User can then enter a new tweet and post this to twitter
  * [x] Required: User is taken back to home timeline with new tweet visible in timeline
+ * [x] Optional: Links in tweets are clickable and will launch the web browser
+ * [x] Optional: User can see a counter with total number of characters left for tweet
+ * [x] Optional Advanced: User can refresh tweets timeline by pulling down to refresh (i.e pull-to-refresh)
+ * [x] Optional Advanced: User can open the twitter app offline and see last loaded tweets
+
 
 Notes:
 
-Did a silly thing and spent an hour looking for a bug. Turned out I forgot to initialize the client #yep
+Did a silly thing and spent an hour looking for a bug. Turned out I forgot to initialize the client #yep  
 
-Video coming soon!
+Icon deviates from Material Design. Ok with it for now since it seems to draw attention away from other apps. Color scheme how ever needs to be revisited.  
+
+For future updates:  
+- Add logout feature  
+- Clean up UI  
+- Add more features like reply, favorite, retweet  
+
+A video of the app via YouTube: https://www.youtube.com/watch?v=ImfO_Cn8azQ&feature=youtu.be
