@@ -13,8 +13,10 @@ Completed user stories:
  * [x] Required: User can click a “Compose” icon in the Action Bar on the top right
  * [x] Required: User can then enter a new tweet and post this to twitter
  * [x] Required: User is taken back to home timeline with new tweet visible in timeline
+ 
  * [x] Optional: Links in tweets are clickable and will launch the web browser
  * [x] Optional: User can see a counter with total number of characters left for tweet
+ 
  * [x] Optional Advanced: User can refresh tweets timeline by pulling down to refresh (i.e pull-to-refresh)
  * [x] Optional Advanced: User can open the twitter app offline and see last loaded tweets
 
