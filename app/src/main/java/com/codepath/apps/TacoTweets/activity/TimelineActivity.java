@@ -41,6 +41,7 @@ public class TimelineActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        getSupportActionBar().setElevation(0);
         //Find the listview
         lvTweets = (ListView) findViewById(R.id.lvTweets);
         //Create the arraylist (data source)

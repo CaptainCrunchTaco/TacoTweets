@@ -2,12 +2,12 @@
 <resources>
 
     <string name="app_name">TacoTweets</string>
-    <string name="title_activity_timeline">Home Timeline</string>
+    <string name="title_activity_timeline">Taco Tweets Timeline</string>
     <string name="login_label">Connect to Twitter</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="action_compose">Compose</string>
-    <string name="title_activity_compose">ComposeActivity</string>
+    <string name="title_activity_compose">Compose a Tweet</string>
 
 </resources>

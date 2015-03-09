@@ -31,6 +31,7 @@ public class ComposeActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose);
+        getSupportActionBar().setElevation(0);
         client = TwitterApplication.getRestClient();
         etTweet = (EditText) findViewById(R.id.etTweet);
     }
