@@ -1,40 +1,22 @@
 package com.codepath.apps.TacoTweets.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
 
-import com.codepath.apps.TacoTweets.EndlessScrollListener;
+import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.TacoTweets.R;
-import com.codepath.apps.TacoTweets.TweetsArrayAdapter;
-import com.codepath.apps.TacoTweets.TwitterApplication;
-import com.codepath.apps.TacoTweets.TwitterClient;
-import com.codepath.apps.TacoTweets.models.Tweet;
-import com.loopj.android.http.JsonHttpResponseHandler;
-
-import org.apache.http.Header;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
+import com.codepath.apps.TacoTweets.fragments.HomeTimelineFragment;
+import com.codepath.apps.TacoTweets.fragments.MentionsTimelineFragment;
 
 public class TimelineActivity extends ActionBarActivity {
 
-    private TwitterClient client;
-    private ArrayList<Tweet> tweets;
-    private ArrayAdapter aTweets;
-    private ListView lvTweets;
-    private SwipeRefreshLayout swipeContainer;
     //USE A QUEUE
 
     @Override
@@ -42,134 +24,23 @@ public class TimelineActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
         getSupportActionBar().setElevation(0);
-        //Find the listview
-        lvTweets = (ListView) findViewById(R.id.lvTweets);
-        //Create the arraylist (data source)
-        tweets = new ArrayList<>();
-        //Construct the adapter from data source
-        aTweets = new TweetsArrayAdapter(this,tweets);
-        //Connect adapter to data source
-        lvTweets.setAdapter(aTweets);
-        //Get the client
-        client = TwitterApplication.getRestClient(); // singleton client
-        populateTimeline();
-        lvTweets.setOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to your AdapterView
-                customLoadMoreDataFromApi(page);
-                // or customLoadMoreDataFromApi(totalItemsCount);
-            }
-        });
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
-                fetchTimelineAsync();
-            }
-        });
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
 
+        //Get the view pager
+        ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
+        //Set the view pager adapter for the pager
+        vpPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
+        //Find the pager sliding tabstrip
+        PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        //Attach the pager tabs to the view pager
+        tabStrip.setViewPager(vpPager);
     }
 
-    public void fetchTimelineAsync() {
-        if(isNetworkAvailable()) {
-            client.getHomeTimeline(new JsonHttpResponseHandler() {
-                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-                    // Remember to CLEAR OUT old items before appending in the new ones
-                    aTweets.clear();
-                    // ...the data has come back, add new items to your adapter...
-                    aTweets.addAll(Tweet.fromJSONArray(json));
-                    // Now we call setRefreshing(false) to signal refresh has finished
-                    swipeContainer.setRefreshing(false);
-                }
+    public void onProfileView(MenuItem mi) {
+        //Launch the profile view
+        Intent i = new Intent(this,ProfileActivity.class);
+        startActivity(i);
 
-                public void onFailure(Throwable e) {
-                    Log.d("DEBUG", "Fetch timeline error: " + e.toString());
-                }
-            });
-        } else {
-            swipeContainer.setRefreshing(false);
-            Toast.makeText(this, "Can't refresh, no internet connection", Toast.LENGTH_LONG).show();
-        }
     }
-
-
-    // Append more data into the adapter
-    public void customLoadMoreDataFromApi(int offset) {
-        if(isNetworkAvailable()) {
-            // This method probably sends out a network request and appends new data items to your adapter.
-            // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
-            // Deserialize API response and then construct new objects to append to the adapter
-            client.getHomeTimeline(Tweet.getMaxId(), new JsonHttpResponseHandler() {
-                //SUCCESS
-
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-                    Log.d("DEBUG", json.toString());
-                    //DESERIALIZE JSON
-                    //CREATE MODELS
-                    //LOAD THE MODEL DATA INTO A LIST VIEW
-                    aTweets.addAll(Tweet.fromJSONArray(json));
-                    Log.d("DEBUG Custom", aTweets.toString());
-                }
-
-
-                //FAILURE
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    Log.d("DEBUG PopulateTimeline", errorResponse.toString());
-                }
-            });
-        } else {
-            Toast.makeText(this, "Can't load stories, no internet connection", Toast.LENGTH_LONG).show();
-        }
-    }
-
-
-
-    //Send an API request to get the timeline JSON
-    //Fill the listview by creating the tweet objects from the JSON
-    private void populateTimeline() {
-        if(isNetworkAvailable()) {
-            client.getHomeTimeline(new JsonHttpResponseHandler() {
-                //SUCCESS
-
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-                    Log.d("DEBUG", json.toString());
-                    //DESERIALIZE JSON
-                    //CREATE MODELS
-                    //LOAD THE MODEL DATA INTO A LIST VIEW
-                    aTweets.addAll(Tweet.fromJSONArray(json));
-                    Log.d("DEBUG", aTweets.toString());
-                }
-
-
-                //FAILURE
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    Log.d("DEBUG PopulateTimeline", errorResponse.toString());
-                }
-            });
-        } else {
-            //Populate with SQLite database
-//            Toast.makeText(this, "Loading from SQLite database", Toast.LENGTH_LONG).show();
-            aTweets.addAll(Tweet.fromSQLite());
-        }
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -195,10 +66,37 @@ public class TimelineActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private Boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    //Return the order of the fragments in the View Pager
+    public class TweetsPagerAdapter extends FragmentPagerAdapter {
+        private String tabTitles[] = {"Timeline", "Mentions"};
+
+        public TweetsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        //The order and creation of fragments within the pager
+        @Override
+        public Fragment getItem(int position) {
+            if (position == 0) {
+                return new HomeTimelineFragment();
+            } else if(position == 1) {
+                return new MentionsTimelineFragment();
+            } else {
+                return null;
+            }
+        }
+
+        //Return the tab title
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
+
+        //How many fragments to swipe between
+        @Override
+        public int getCount() {
+            return tabTitles.length;
+        }
     }
+
 }

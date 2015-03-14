@@ -1,9 +1,11 @@
 package com.codepath.apps.TacoTweets;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.scribe.builder.api.Api;
@@ -43,7 +45,6 @@ public class TwitterClient extends OAuthBaseClient {
         //Specify the params
         RequestParams params = new RequestParams();
         params.put("count",25);
-        params.put("since_id",1);
         //Execute the request
         getClient().get(apiUrl, params, handler);
     }
@@ -55,6 +56,7 @@ public class TwitterClient extends OAuthBaseClient {
         params.put("count",25);
         params.put("max_id", maxId-1);
         //Execute the request
+        Log.v("LookHERE", getClient().toString());
         getClient().get(apiUrl, params, handler);
     }
 
@@ -63,6 +65,42 @@ public class TwitterClient extends OAuthBaseClient {
         RequestParams params = new RequestParams();
         params.put("status", status);
         getClient().post(apiUrl, params, handler);
+    }
+
+    public void getMentionsTimeline(JsonHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+        //Specify the params
+        RequestParams params = new RequestParams();
+        params.put("count",25);
+        //Execute the request
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void getMentionsTimeline(long maxId, JsonHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+        //Specify the params
+        RequestParams params = new RequestParams();
+        params.put("count",25);
+        params.put("max_id", maxId-1);
+        //Execute the request
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void getUserTimeline(String screeName, JsonHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/user_timeline.json");
+        //Specify the params
+        RequestParams params = new RequestParams();
+        params.put("count",25);
+        params.put("since_id",1);
+        params.put("screen_name", screeName);
+        //Execute the request
+        getClient().get(apiUrl, params, handler);
+
+    }
+
+    public void getUserInfo(JsonHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("account/verify_credentials.json");
+        getClient().get(apiUrl, null, handler);
     }
 
     //COMPOSE TWEET
