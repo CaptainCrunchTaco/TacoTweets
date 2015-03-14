@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,30 +35,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
     public void onActivityCreated (Bundle savedInstanceState){
         // Always call the superclass so it can save the view hierarchy state
         super.onActivityCreated(savedInstanceState);
-//        getLvTweets().setOnScrollListener(new EndlessScrollListener() {
-//            @Override
-//            public void onLoadMore(int page, int totalItemsCount) {
-//                // Triggered only when new data needs to be appended to the list
-//                // Add whatever code is needed to append new items to your AdapterView
-//                customLoadMoreDataFromApi(page);
-//                // or customLoadMoreDataFromApi(totalItemsCount);
-//            }
-//        });
-        // Setup refresh listener which triggers new data loading
-        getSwipeContainer().setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
-                fetchTimelineAsync();
-            }
-        });
-        // Configure the refreshing colors
-        getSwipeContainer().setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
     }
 
     public void fetchTimelineAsync() {
@@ -84,37 +59,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
             Toast.makeText(getActivity(), "Can't refresh, no internet connection", Toast.LENGTH_LONG).show();
         }
     }
-
-//    // Append more data into the adapter
-//    public void customLoadMoreDataFromApi(int offset) {
-//        if(isNetworkAvailable()) {
-//            // This method probably sends out a network request and appends new data items to your adapter.
-//            // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
-//            // Deserialize API response and then construct new objects to append to the adapter
-//            client.getHomeTimeline(Tweet.getMaxId(), new JsonHttpResponseHandler() {
-//
-//                //SUCCESS
-//                @Override
-//                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
-//                    //DESERIALIZE JSON
-//                    //CREATE MODELS
-//                    //LOAD THE MODEL DATA INTO A LIST VIEW
-//                    Log.v("Scroll", "Look Under Here");
-//                    Log.v("Scroll", json.toString());
-//                    Log.v("Scroll", Long.toString(Tweet.getMaxId()));
-//                    addAll(Tweet.fromJSONArray(json));
-//                }
-//
-//                //FAILURE
-//                @Override
-//                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-//                    Log.d("DEBUG PopulateTimeline", errorResponse.toString());
-//                }
-//            });
-//        } else {
-//            Toast.makeText(getActivity(), "Can't load stories, no internet connection", Toast.LENGTH_LONG).show();
-//        }
-//    }
 
     //Send an API request to get the timeline JSON
     //Fill the listview by creating the tweet objects from the JSON

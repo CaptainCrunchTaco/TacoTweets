@@ -1,11 +1,12 @@
 package com.codepath.apps.TacoTweets;
 
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 
 /**
  * Created by Ariel on 3/5/15.
  */
-public abstract class EndlessScrollListener implements AbsListView.OnScrollListener {
+public abstract class EndlessScrollListener implements OnScrollListener {
     // The minimum amount of items to have below your current scroll position
     // before loading more.
     private int visibleThreshold = 5;
@@ -57,7 +58,7 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
         // the visibleThreshold and need to reload more data.
         // If we do need to reload some more data, we execute onLoadMore to fetch the data.
         if (!loading && (totalItemCount - visibleItemCount)<=(firstVisibleItem + visibleThreshold)) {
-            onLoadMore(currentPage+1, totalItemCount);
+            onLoadMore(currentPage + 1, totalItemCount);
             loading = true;
         }
     }

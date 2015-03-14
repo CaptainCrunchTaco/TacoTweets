@@ -1,7 +1,6 @@
 package com.codepath.apps.TacoTweets;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -46,17 +45,6 @@ public class TwitterClient extends OAuthBaseClient {
         RequestParams params = new RequestParams();
         params.put("count",25);
         //Execute the request
-        getClient().get(apiUrl, params, handler);
-    }
-
-    public void getHomeTimeline(long maxId, AsyncHttpResponseHandler handler) {
-        String apiUrl = getApiUrl("statuses/home_timeline.json");
-        //Specify the params
-        RequestParams params = new RequestParams();
-        params.put("count",25);
-        params.put("max_id", maxId-1);
-        //Execute the request
-        Log.v("LookHERE", getClient().toString());
         getClient().get(apiUrl, params, handler);
     }
 

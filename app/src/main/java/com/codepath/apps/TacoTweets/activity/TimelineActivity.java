@@ -39,7 +39,6 @@ public class TimelineActivity extends ActionBarActivity {
         //Launch the profile view
         Intent i = new Intent(this,ProfileActivity.class);
         startActivity(i);
-
     }
 
     @Override

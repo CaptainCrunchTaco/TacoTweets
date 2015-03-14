@@ -30,7 +30,6 @@ public abstract class TweetsListFragment extends Fragment {
     private SwipeRefreshLayout swipeContainer;
 
     //Inflation logic
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_tweets_list, parent, false);
@@ -39,12 +38,25 @@ public abstract class TweetsListFragment extends Fragment {
         //Connect adapter to data source
         lvTweets.setAdapter(aTweets);
         swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                fetchTimelineAsync();
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
         return v;
     }
 
-
     //Creation of lifecycle event
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,5 +81,7 @@ public abstract class TweetsListFragment extends Fragment {
     public SwipeRefreshLayout getSwipeContainer() {
         return swipeContainer;
     }
+
+    public abstract void fetchTimelineAsync();
 
 }
