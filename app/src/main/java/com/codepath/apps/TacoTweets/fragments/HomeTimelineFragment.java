@@ -78,7 +78,7 @@ public class HomeTimelineFragment extends TweetsListFragment {
         } else {
             //Populate with SQLite database
 //            Toast.makeText(this, "Loading from SQLite database", Toast.LENGTH_LONG).show();
-            addAll(Tweet.fromSQLite());
+//            addAll(Tweet.fromSQLite());
         }
     }
 
