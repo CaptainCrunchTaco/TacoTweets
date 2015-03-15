@@ -7,6 +7,8 @@ import com.activeandroid.annotation.Table;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /*
 
     "user": {
@@ -25,7 +27,7 @@ import org.json.JSONObject;
 
  */
 @Table(name = "Users")
-public class User extends Model{
+public class User extends Model implements Serializable{
 
     //list attributes
     @Column(name = "Name")

@@ -12,19 +12,26 @@ import android.view.MenuItem;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.TacoTweets.R;
+import com.codepath.apps.TacoTweets.TwitterApplication;
+import com.codepath.apps.TacoTweets.TwitterClient;
 import com.codepath.apps.TacoTweets.fragments.HomeTimelineFragment;
 import com.codepath.apps.TacoTweets.fragments.MentionsTimelineFragment;
+import com.codepath.apps.TacoTweets.models.User;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONObject;
 
 public class TimelineActivity extends ActionBarActivity {
 
-    //USE A QUEUE
+    private User currentUser;
+    private TwitterClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
         getSupportActionBar().setElevation(0);
-
         //Get the view pager
         ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
         //Set the view pager adapter for the pager
@@ -33,11 +40,24 @@ public class TimelineActivity extends ActionBarActivity {
         PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         //Attach the pager tabs to the view pager
         tabStrip.setViewPager(vpPager);
+        generateCurrentUser();
+    }
+
+    //Pass the information from this client call to Compose/Profile Activity
+    private void generateCurrentUser() {
+        client = TwitterApplication.getRestClient();
+        client.getUserInfo(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                currentUser = User.fromJson(response);
+            }
+        });
     }
 
     public void onProfileView(MenuItem mi) {
         //Launch the profile view
         Intent i = new Intent(this,ProfileActivity.class);
+        i.putExtra("User", currentUser);
         startActivity(i);
     }
 

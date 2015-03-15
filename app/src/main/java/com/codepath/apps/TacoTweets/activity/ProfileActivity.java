@@ -9,15 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.apps.TacoTweets.R;
-import com.codepath.apps.TacoTweets.TwitterApplication;
 import com.codepath.apps.TacoTweets.TwitterClient;
 import com.codepath.apps.TacoTweets.fragments.UserTimelineFragment;
 import com.codepath.apps.TacoTweets.models.User;
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
-
-import org.apache.http.Header;
-import org.json.JSONObject;
 
 public class ProfileActivity extends ActionBarActivity {
 
@@ -28,19 +23,12 @@ public class ProfileActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        client = TwitterApplication.getRestClient();
-        //Get the account info
-        client.getUserInfo(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                user = User.fromJson(response);
-                //My current user account information
-                getSupportActionBar().setTitle("@" + user.getScreenName());
-                populateProfileHeader(user);
-            }
-        });
+        Bundle profileUser = getIntent().getExtras();
+        user = (User) profileUser.getSerializable("User");
+        getSupportActionBar().setTitle("@" + user.getScreenName());
+        populateProfileHeader(user);
         //Get the screen name from the activity that launches this
-        String screenName = getIntent().getStringExtra("screen_name");
+        String screenName = user.getScreenName();
         //Create userTimelineFragment
         UserTimelineFragment fragmentUserTimeline = UserTimelineFragment.newInstance(screenName);
         if(savedInstanceState ==null) {

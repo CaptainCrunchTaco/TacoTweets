@@ -31,12 +31,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
         populateTimeline();
     }
 
-    @Override
-    public void onActivityCreated (Bundle savedInstanceState){
-        // Always call the superclass so it can save the view hierarchy state
-        super.onActivityCreated(savedInstanceState);
-    }
-
     public void fetchTimelineAsync() {
         if(isNetworkAvailable()) {
             client.getHomeTimeline(new JsonHttpResponseHandler() {

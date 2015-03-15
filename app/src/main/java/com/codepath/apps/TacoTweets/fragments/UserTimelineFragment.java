@@ -22,6 +22,7 @@ import org.json.JSONObject;
 public class UserTimelineFragment extends TweetsListFragment{
 
     private TwitterClient client;
+    private String screenName = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,7 @@ public class UserTimelineFragment extends TweetsListFragment{
         super.onActivityCreated(savedInstanceState);
     }
 
-    // Creates a new fragment given an int and title
+    // Creates a new fragment given a title
     // UserTimelineFragment.newInstance(5, "Hello");
     public static UserTimelineFragment newInstance(String screen_name) {
         UserTimelineFragment userFragment = new UserTimelineFragment();
@@ -73,9 +74,9 @@ public class UserTimelineFragment extends TweetsListFragment{
     //Send an API request to get the timeline JSON
     //Fill the listview by creating the tweet objects from the JSON
     private void populateTimeline() {
-        String screenName = getArguments().getString("screen_name");
+        screenName = getArguments().getString("screen_name");
         if(isNetworkAvailable()) {
-            client.getUserTimeline(null, new JsonHttpResponseHandler() {
+            client.getUserTimeline(screenName, new JsonHttpResponseHandler() {
 
                 //SUCCESS
                 @Override

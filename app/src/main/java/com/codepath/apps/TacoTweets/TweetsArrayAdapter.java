@@ -1,6 +1,7 @@
 package com.codepath.apps.TacoTweets;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.codepath.apps.TacoTweets.activity.ProfileActivity;
 import com.codepath.apps.TacoTweets.models.Tweet;
+import com.codepath.apps.TacoTweets.models.User;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -18,7 +21,7 @@ import java.util.List;
 import java.util.Locale;
 
 //Taking the Tweets objects and turning them into Views displayed in the list
-public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
+public class TweetsArrayAdapter extends ArrayAdapter<Tweet> implements View.OnClickListener{
 
 
     public TweetsArrayAdapter(Context context, List<Tweet> tweets) {
@@ -34,18 +37,28 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         TextView tvTimestamp;
     }
 
+    @Override
+    public void onClick(View view) {
+        Intent accessProfile = new Intent(getContext(), ProfileActivity.class);
+        accessProfile.putExtra("User", (User) view.getTag());
+        getContext().startActivity(accessProfile);
+
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // 1. Get tweet
         Tweet tweet = getItem(position);
         // 2. Find or inflate the template
-        ViewHolder viewHolder; //Implement viewholder to increase performance
+        final ViewHolder viewHolder; //Implement viewholder to increase performance
         if (convertView == null) {
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_tweet, parent, false);
             // 3. Find subviews to fill with data and the template
             viewHolder.ivProfileImage = (ImageView) convertView.findViewById(R.id.ivProfileImage);
+            if(!getContext().getClass().equals(ProfileActivity.class)) {
+                viewHolder.ivProfileImage.setOnClickListener(this);
+            }
             viewHolder.tvUsername = (TextView) convertView.findViewById(R.id.tvUsername);
             viewHolder.tvBody = (TextView) convertView.findViewById(R.id.tvBody);
             viewHolder.tvTimestamp = (TextView) convertView.findViewById(R.id.tvTimestamp);
@@ -55,6 +68,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         }
         // 4. Populate data into the subviews
         viewHolder.tvUsername.setText(tweet.getUser().getScreenName());
+        //To be passed through Profile Activity if clicked on
+        viewHolder.ivProfileImage.setTag(tweet.getUser());
         viewHolder.tvBody.setText(tweet.getBody());
         viewHolder.ivProfileImage.setImageResource(android.R.color.transparent); //clear out the old image for a recycled view
         viewHolder.tvTimestamp.setText(getRelativeTimeAgo(tweet.getCreatedAt()));
