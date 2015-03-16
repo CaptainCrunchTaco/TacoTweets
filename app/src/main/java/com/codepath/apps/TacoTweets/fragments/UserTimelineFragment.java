@@ -23,6 +23,7 @@ public class UserTimelineFragment extends TweetsListFragment{
 
     private TwitterClient client;
     private String screenName = null;
+//    int sourceUser = 3;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,34 @@ public class UserTimelineFragment extends TweetsListFragment{
         //Get the client
         client = TwitterApplication.getRestClient(); // singleton client
         populateTimeline();
+    }
+
+    @Override
+    public void customLoadMoreDataFromApi(long maxId) {
+        screenName = getArguments().getString("screen_name");
+        if(isNetworkAvailable()) {
+            client.getUserTimeline(maxId, screenName, new JsonHttpResponseHandler() {
+
+                //SUCCESS
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
+                    //DESERIALIZE JSON
+                    //CREATE MODELS
+                    //LOAD THE MODEL DATA INTO A LIST VIEW
+                    addAll(Tweet.fromJSONArray(json));
+                    //Log.d("DEBUG", aTweets.toString());
+                }
+                //FAILURE
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("DEBUG PopulateTimeline", errorResponse.toString());
+                }
+            });
+        } else {
+            //Populate with SQLite database
+//            Toast.makeText(this, "Loading from SQLite database", Toast.LENGTH_LONG).show();
+//            addAll(Tweet.fromSQLite());
+        }
     }
 
     @Override

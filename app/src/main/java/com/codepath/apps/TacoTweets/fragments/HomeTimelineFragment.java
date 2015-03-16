@@ -22,6 +22,34 @@ import org.json.JSONObject;
 public class HomeTimelineFragment extends TweetsListFragment {
 
     private TwitterClient client;
+//    int sourceHome = 1;
+
+    @Override
+    public void customLoadMoreDataFromApi(long maxId) {
+        if(isNetworkAvailable()) {
+            client.getHomeTimeline(maxId, new JsonHttpResponseHandler() {
+
+                //SUCCESS
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray json) {
+                    //DESERIALIZE JSON
+                    //CREATE MODELS
+                    //LOAD THE MODEL DATA INTO A LIST VIEW
+                    addAll(Tweet.fromJSONArray(json));
+                    //Log.d("DEBUG", aTweets.toString());
+                }
+                //FAILURE
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("DEBUG PopulateTimeline", errorResponse.toString());
+                }
+            });
+        } else {
+            //Populate with SQLite database
+//            Toast.makeText(this, "Loading from SQLite database", Toast.LENGTH_LONG).show();
+//            addAll(Tweet.fromSQLite());
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

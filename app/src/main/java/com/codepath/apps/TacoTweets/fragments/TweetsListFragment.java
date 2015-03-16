@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.codepath.apps.TacoTweets.EndlessScrollListener;
 import com.codepath.apps.TacoTweets.R;
 import com.codepath.apps.TacoTweets.TweetsArrayAdapter;
 import com.codepath.apps.TacoTweets.models.Tweet;
@@ -53,8 +54,37 @@ public abstract class TweetsListFragment extends Fragment {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+        //Setup endless scroll
+        lvTweets.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+
+                customLoadMoreDataFromApi(findMax());
+                // or customLoadMoreDataFromApi(totalItemsCount);
+            }
+        });
         return v;
     }
+
+    private long findMax() {
+//        long currentId;
+//        long maxId=-1;
+//        for(Tweet everyTweet:lvTweets.getChildAt(lvTweets.getAdapter().getCount())){
+//            currentId = everyTweet.getUid();
+//            if(maxId == -1) {
+//                currentId = maxId;
+//            } else if(currentId < maxId) {
+//                maxId = currentId;
+//            }
+//        }
+        Tweet blah = (Tweet) aTweets.getItem(aTweets.getCount()-1);
+        return blah.getUid();
+    }
+
+    // Append more data into the adapter
+    public abstract void customLoadMoreDataFromApi(long maxId);
 
     //Creation of lifecycle event
     @Override

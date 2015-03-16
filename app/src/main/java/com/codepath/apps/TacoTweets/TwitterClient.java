@@ -44,6 +44,18 @@ public class TwitterClient extends OAuthBaseClient {
         //Specify the params
         RequestParams params = new RequestParams();
         params.put("count",25);
+        params.put("since_id",1);
+        //Execute the request
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void getHomeTimeline(long maxId, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/home_timeline.json");
+        //Specify the params
+        RequestParams params = new RequestParams();
+        params.put("count",25);
+        params.put("since_id",1);
+        params.put("max_id", maxId-1);
         //Execute the request
         getClient().get(apiUrl, params, handler);
     }
@@ -64,6 +76,16 @@ public class TwitterClient extends OAuthBaseClient {
         getClient().get(apiUrl, params, handler);
     }
 
+    public void getMentionsTimeline(long maxId, JsonHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+        //Specify the params
+        RequestParams params = new RequestParams();
+        params.put("count",25);
+        params.put("max_id", maxId-1);
+        //Execute the request
+        getClient().get(apiUrl, params, handler);
+    }
+
     public void getUserTimeline(String screeName, JsonHttpResponseHandler handler) {
         String apiUrl = getApiUrl("statuses/user_timeline.json");
         //Specify the params
@@ -71,6 +93,19 @@ public class TwitterClient extends OAuthBaseClient {
         params.put("count",25);
         params.put("since_id",1);
         params.put("screen_name", screeName);
+        //Execute the request
+        getClient().get(apiUrl, params, handler);
+
+    }
+
+    public void getUserTimeline(long maxId, String screeName, JsonHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/user_timeline.json");
+        //Specify the params
+        RequestParams params = new RequestParams();
+        params.put("count",25);
+        params.put("since_id",1);
+        params.put("screen_name", screeName);
+        params.put("max_id", maxId-1);
         //Execute the request
         getClient().get(apiUrl, params, handler);
 

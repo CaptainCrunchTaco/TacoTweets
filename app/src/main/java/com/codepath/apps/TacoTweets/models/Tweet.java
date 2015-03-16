@@ -71,7 +71,6 @@ public class Tweet extends Model {
     private User user; // store embedded user object
     @Column(name = "createdAt")
     private String createdAt;
-    private static long maxId=-1;
 
     public Tweet() {
         super();
@@ -82,11 +81,6 @@ public class Tweet extends Model {
         this.uid = uid;
         this.user = user;
         this.createdAt = createdAt;
-    }
-
-
-    public static long getMaxId() {
-        return maxId;
     }
 
     public User getUser() {
@@ -109,26 +103,19 @@ public class Tweet extends Model {
     public static ArrayList<Tweet> fromJSONArray(JSONArray jsonArray) {
         ArrayList<Tweet> tweets = new ArrayList<>();
         //Return the json array and create tweets
-        for(int i = 0; i < jsonArray.length(); i++) {
-            try {
-                JSONObject tweetJSON = jsonArray.getJSONObject(i);
-                Tweet tweet = Tweet.fromJSON(tweetJSON);
-                if(tweet.maxId == -1) {
-                    tweet.maxId=tweet.uid;
-                } else {
-                    if(tweet.maxId > tweet.uid) {
-                        tweet.maxId = tweet.uid;
+            for (int i = 0; i < jsonArray.length(); i++) {
+                try {
+                    JSONObject tweetJSON = jsonArray.getJSONObject(i);
+                    Tweet tweet = Tweet.fromJSON(tweetJSON);
+                    if (tweet != null) {
+                        tweets.add(tweet);
+                        tweet.save();
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    continue;
                 }
-                if(tweet != null) {
-                    tweets.add(tweet);
-                    tweet.save();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                continue;
             }
-        }
         //Return the finish list
         return tweets;
     }

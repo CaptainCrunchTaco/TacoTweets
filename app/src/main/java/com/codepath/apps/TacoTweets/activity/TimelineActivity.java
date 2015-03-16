@@ -31,7 +31,6 @@ public class TimelineActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
-        getSupportActionBar().setElevation(0);
         //Get the view pager
         ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
         //Set the view pager adapter for the pager
@@ -98,9 +97,12 @@ public class TimelineActivity extends ActionBarActivity {
         public Fragment getItem(int position) {
             if (position == 0) {
                 return new HomeTimelineFragment();
-            } else if(position == 1) {
+            }
+
+            else if(position == 1) {
                 return new MentionsTimelineFragment();
-            } else {
+            }
+            else {
                 return null;
             }
         }
